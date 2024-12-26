@@ -6,7 +6,7 @@ type Request struct {
 	Url               string
 	AuthToken         string
 	Method            string
-	Payload           string
+	Payload           map[string]interface{}
 	RequestPerUser    int
 	ConcurrentRequest int
 }

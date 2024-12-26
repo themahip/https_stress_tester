@@ -2,16 +2,16 @@ package Handler
 
 import (
 	"fmt"
-	method "stess_tester/Method"
+	methods "stess_tester/method"
 	Types "stess_tester/type"
 )
 
 func Methodhandler(Request *Types.Request) {
 	switch {
 	case Request.Method == "POST":
-		method.GETMETHOD(Request)
+		methods.POSTMETHOD(Request)
 	case Request.Method == "GET":
-		method.GETMETHOD(Request)
+		methods.GetMethod(Request)
 	case Request.Method == "UPDATE":
 		fmt.Println(Request.Method)
 	case Request.Method == "DELETE":

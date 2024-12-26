@@ -1,30 +1,29 @@
-package method
+package methods
 
 import (
 	"fmt"
 	"net/http"
+	result "stess_tester/Result"
 	Types "stess_tester/type"
 	"sync"
 	"time"
 )
 
-func GETMETHOD(Request *Types.Request) {
+func GetMethod(Request *Types.Request) {
 	wg := &sync.WaitGroup{}
 	fmt.Println(Request)
-	result := make(chan Types.PerResult, Request.ConcurrentRequest*Request.RequestPerUser)
-	startTime := time.Now()
+	perresult := make(chan Types.PerResult, Request.ConcurrentRequest*Request.RequestPerUser)
+
 	for i := 0; i < Request.ConcurrentRequest; i++ {
 		wg.Add(1)
-		go getrequest(result, Request, wg)
+		go getrequest(perresult, Request, wg)
 	}
 
 	go func() {
 		wg.Wait()
-		close(result)
+		close(perresult)
 	}()
-
-	processresult(result, Request, startTime)
-
+	result.Processresult(perresult, Request)
 }
 
 func getrequest(result chan<- Types.PerResult, request *Types.Request, wg *sync.WaitGroup) {
@@ -59,32 +58,4 @@ func getrequest(result chan<- Types.PerResult, request *Types.Request, wg *sync.
 
 	}
 
-}
-
-func processresult(perresults <-chan Types.PerResult, request *Types.Request, starttime time.Time) {
-	var SuccessRequest, FailedRequest int
-	var totalDuration time.Duration
-	// var errormessage []string
-
-	for perresult := range perresults {
-		if perresult.Err != nil {
-
-			FailedRequest++
-			// errormessage = append(errormessage, perresult.Err.Error())
-			totalDuration = +perresult.Duration
-		} else {
-			SuccessRequest++
-			totalDuration = +perresult.Duration
-		}
-	}
-
-	finalResult := Types.FinalResult{
-		TargetUrl:             request.Url,
-		TotalRequestSent:      request.RequestPerUser * request.ConcurrentRequest,
-		ConcurrentRequestSent: request.ConcurrentRequest,
-		TotalDuration:         totalDuration,
-		FailedRequest:         FailedRequest,
-		SuccessRequest:        SuccessRequest,
-	}
-	fmt.Println(finalResult)
 }
