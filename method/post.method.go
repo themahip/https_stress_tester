@@ -35,15 +35,13 @@ func postrequest(request *Types.Request, wg *sync.WaitGroup, perresult chan<- Ty
 		startTime := time.Now()
 		payloadBytes, err := json.Marshal(request.Payload)
 		if err != nil {
-			fmt.Println("hyaa feri err")
+			fmt.Println("Error in marshaling bytes")
 		}
 		payload := bytes.NewBuffer([]byte(payloadBytes))
 
-		fmt.Println(payload)
-
 		req, err := http.NewRequest("POST", request.Url, payload)
 		if err != nil {
-			fmt.Println("Error in creating new request:", err)
+			fmt.Println("Error in creating new request: ", err)
 			perresult <- Types.PerResult{
 				Err:        err,
 				StatusCode: 0,
@@ -53,7 +51,7 @@ func postrequest(request *Types.Request, wg *sync.WaitGroup, perresult chan<- Ty
 		}
 
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Authorization", "Token "+request.AuthToken)
+		req.Header.Set("Authorization", "Bearer "+request.AuthToken)
 
 		client := http.Client{Timeout: time.Second * 20}
 		res, err := client.Do(req)

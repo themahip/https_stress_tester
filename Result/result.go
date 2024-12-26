@@ -9,12 +9,11 @@ import (
 func Processresult(perresults <-chan Types.PerResult, request *Types.Request) {
 	var SuccessRequest, FailedRequest int
 	var totalDuration time.Duration
-	// var errormessage []string
 
 	for perresult := range perresults {
 		if perresult.Err != nil {
 			FailedRequest++
-			// errormessage = append(errormessage, perresult.Err.Error())
+
 			totalDuration = +perresult.Duration
 		} else {
 			SuccessRequest++

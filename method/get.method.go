@@ -38,7 +38,7 @@ func getrequest(result chan<- Types.PerResult, request *Types.Request, wg *sync.
 		}
 
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Authorization", "Token "+request.AuthToken)
+		req.Header.Set("Authorization", "Bearer "+request.AuthToken)
 
 		res, err := client.Do(req)
 		duration := time.Since(startTime)
